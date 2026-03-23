@@ -116,6 +116,7 @@ import {
 import { ReactionsRowButtonViewModel } from "../../../viewmodels/message-body/ReactionsRowButtonViewModel";
 import { MAX_ITEMS_WHEN_LIMITED, ReactionsRowViewModel } from "../../../viewmodels/message-body/ReactionsRowViewModel";
 import { useMatrixClientContext } from "../../../contexts/MatrixClientContext";
+import { SuggestedReactions } from "../messages/SuggestedReactions";
 
 export type GetRelationsForEvent = (
     eventId: string,
@@ -1224,8 +1225,15 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             );
         }
 
+        const suggestedReactions = !isRedacted ? <SuggestedReactions mxEvent={this.props.mxEvent} /> : undefined;
+
+        const hasSuggestedReactions =
+            !isRedacted && Array.isArray(this.props.mxEvent.getContent()["com.myorg.suggested_reactions"]);
+
         // If we have reactions or a pinned message badge, we need a footer
-        const hasFooter = Boolean((reactionsRow && this.state.reactions) || pinnedMessageBadge);
+        const hasFooter = Boolean(
+            (reactionsRow && this.state.reactions) || hasSuggestedReactions || pinnedMessageBadge,
+        );
 
         const groupTimestamp = !useIRCLayout ? linkedTimestamp : null;
         const ircTimestamp = useIRCLayout ? linkedTimestamp : null;
@@ -1322,6 +1330,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                         hasFooter && (
                             <div className="mx_EventTile_footer" key="mx_EventTile_footer">
                                 {(this.props.layout === Layout.Group || !isOwnEvent) && pinnedMessageBadge}
+                                {suggestedReactions}
                                 {reactionsRow}
                                 {this.props.layout === Layout.Bubble && isOwnEvent && pinnedMessageBadge}
                             </div>
@@ -1518,6 +1527,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                                     {hasFooter && (
                                         <div className="mx_EventTile_footer">
                                             {pinnedMessageBadge}
+                                            {suggestedReactions}
                                             {reactionsRow}
                                         </div>
                                     )}
@@ -1530,6 +1540,7 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
                                 {hasFooter && (
                                     <div className="mx_EventTile_footer">
                                         {(this.props.layout === Layout.Group || !isOwnEvent) && pinnedMessageBadge}
+                                        {suggestedReactions}
                                         {reactionsRow}
                                         {this.props.layout === Layout.Bubble && isOwnEvent && pinnedMessageBadge}
                                     </div>
