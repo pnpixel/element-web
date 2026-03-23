@@ -1225,7 +1225,9 @@ export class UnwrappedEventTile extends React.Component<EventTileProps, IState> 
             );
         }
 
-        const suggestedReactions = !isRedacted ? <SuggestedReactions mxEvent={this.props.mxEvent} /> : undefined;
+        const suggestedReactions = !isRedacted ? (
+            <SuggestedReactions mxEvent={this.props.mxEvent} reactions={this.state.reactions} />
+        ) : undefined;
 
         const hasSuggestedReactions =
             !isRedacted && Array.isArray(this.props.mxEvent.getContent()["com.myorg.suggested_reactions"]);
